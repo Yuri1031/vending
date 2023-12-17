@@ -1,0 +1,47 @@
+
+.row {
+  margin-left:30px;
+}
+
+/* フォームのスタイル */
+.base {
+    text-align: left; 
+  }
+
+  .form-group {
+    margin-bottom: 5px; /* フォーム要素の下に余白を設定 */
+    text-align: left; /* フォームを中央寄せ */
+  }
+
+  /* フォーム要素のスタイル */
+  input,textarea,select{
+    width: auto; /* フォーム要素を親要素に合わせて幅を設定 */
+    padding: 10px; /* 内側のパディングを追加 */
+    border: 1px solid #ccc; /* ボーダーを追加 */
+    border-radius: 4px; /* 角丸にする */
+    box-sizing: border-box; /* ボーダーボックスモデルを適用 */
+  }
+
+  .go{
+    background-color: #ffae00; /* ボタンの背景色 */
+  }
+
+  .back{
+    background-color: #007bff; /* ボタンの背景色 */
+  }
+
+/* ボタンのスタイル */
+input[type="submit"],
+input[type="button"] {
+  padding: 10px 20px; /* ボタンのパディング設定 */
+  color: #fff; /* ボタンのテキスト色 */
+  border: none; /* ボーダーをなしに設定 */
+  border-radius: 4px; /* 角丸にする */
+  cursor: pointer; /* ボタンにポインターカーソルを設定 */
+}
+
+/* ボタンホバー時のスタイル */
+input[type="submit"]:hover,
+input[type="button"]:hover {
+  background-color: #758ca5; /* ボタンの背景色を変更 */
+}

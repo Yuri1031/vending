@@ -1,0 +1,41 @@
+
+.row {
+  margin-left:30px;
+}
+
+/* フォームのスタイル */
+.base {
+    text-align: center; 
+  }
+
+  .form-group {
+    margin-bottom: 5px; /* フォーム要素の下に余白を設定 */
+    text-align: center; /* フォームを中央寄せ */
+  }
+
+  /* フォーム要素のスタイル */
+  input[type="text"],
+  input[type="password"]{
+    width: auto; /* フォーム要素を親要素に合わせて幅を設定 */
+    padding: 10px; /* 内側のパディングを追加 */
+    border: 1px solid #ccc; /* ボーダーを追加 */
+    border-radius: 4px; /* 角丸にする */
+    box-sizing: border-box; /* ボーダーボックスモデルを適用 */
+  }
+
+/* ボタンのスタイル */
+input[type="submit"],
+input[type="button"] {
+  padding: 10px 20px; /* ボタンのパディング設定 */
+  background-color: #007bff; /* ボタンの背景色 */
+  color: #fff; /* ボタンのテキスト色 */
+  border: none; /* ボーダーをなしに設定 */
+  border-radius: 4px; /* 角丸にする */
+  cursor: pointer; /* ボタンにポインターカーソルを設定 */
+}
+
+/* ボタンホバー時のスタイル */
+input[type="submit"]:hover,
+input[type="button"]:hover {
+  background-color: #0056b3; /* ボタンの背景色を変更 */
+}
