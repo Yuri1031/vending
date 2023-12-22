@@ -14,10 +14,12 @@
         <form method="POST" action="{{route('register.store')}}" enctype="multipart/form-data" >
           @csrf
           <div class="form-group">
+            商品名　
             <input type="text" name="product_name" placeholder="商品名" required>
           </div>
 
           <div class="form-group">
+              メーカー
               <select class="choices" name="company_id" required>
                 <option value="" disabled selected>メーカー名</option>
                   @foreach ($companies as $company)
@@ -28,18 +30,22 @@
 
 
           <div class="form-group">
+            価格　　
             <input placeholder="価格" type="number" name="price">
           </div>
 
           <div class="form-group">
+            在庫数　
             <input placeholder="在庫数" type="number" name="stock">
           </div>
 
           <div class="form-group">
+            コメント
             <textarea placeholder="コメント" name="comment" rows="3"></textarea>
           </div>
           
           <div class="form-group">
+            商品画像
             <input placeholder="商品画像" type="file" name="img">
           </div>
 

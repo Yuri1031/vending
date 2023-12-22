@@ -49,18 +49,3 @@ Route::POST('/list/{id}',[App\Http\Controllers\ProductsController::class,'update
 Route::delete('/list/{id}',[App\Http\Controllers\ProductsController::class,'destroy'])->name('destroy');
 
 
-
-
-//ログイン
-//Route::get('/', [App\Http\Controllers\Auth\LoginController::class, 'index'])->name('/');
-//Route::get('/', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('auth.login');
-
-//サインイン
-//Route::get('/signin', [App\Http\Controllers\Auth\RegisterController::class, 'index'])->name('auth.register');
-//Route::post('/signin', [App\Http\Controllers\Auth\RegisterController::class, 'create'])->name('regist');
-//Route::get('/signin', [App\Http\Controllers\SigninController::class, 'index'])->name('signin');
-
-//一覧・新規・詳細画面
-//Route::resource('products', ProductsController::class);
-
-

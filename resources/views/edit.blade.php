@@ -15,10 +15,12 @@
         <form method="POST" action="{{ route('update.list', ['id' => $product->id]) }}" enctype="multipart/form-data">
          @csrf
          <div class="form-group">
+            商品名　
             <input type="text" value="{{ old('product_name', $product->product_name) }}" name="product_name" required>
           </div>
                   
           <div class="form-group">
+              メーカー
               <select class="choices" name="company_id" required>
                 <option value="" disabled selected>メーカー名</option>
                   @foreach ($companies as $company)
@@ -30,19 +32,28 @@
           </div>
           
           <div class="form-group">
+            価格　　
             <input value="{{ old('price',$product->price) }}" type="number" name="price">
           </div>
 
           <div class="form-group">
+            在庫数　
             <input value="{{ old('stock',$product->stock) }}" type="number" name="stock">
           </div>
 
           <div class="form-group">
+            コメント
             <textarea value="{{ $product->comment }}" name="comment" rows="3"></textarea>
           </div>
           
           <div class="form-group">
-            <input value="{{ old('img_path',$product->img_path) }}" type="file" name="img">
+            商品画像
+            <input type="file" name="img">
+            @if ($product->img_path)
+               <img src="{{ asset($product->img_path) }}" alt="商品画像">
+            @else
+               <p>画像未登録</p>
+            @endif
           </div>
 
           <input type="submit" class="go" value="編集完了">

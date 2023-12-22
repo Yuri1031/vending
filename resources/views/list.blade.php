@@ -51,7 +51,13 @@
           @foreach ($products as $product)
           <tr>
             <td>{{ $product->id }}</td>
-            <td>{{ $product->img_path }}商品画像</td>
+            <td>
+              @if ($product->img_path)
+                <img src="{{ asset($product->img_path) }}" alt="商品画像" width="100" height="50">
+              @else
+                No Image
+              @endif
+            </td>
             <td>{{ $product->product_name }}</td>
             <td>￥{{ $product->price }}</td>
             <td>{{ $product->stock }}</td>
