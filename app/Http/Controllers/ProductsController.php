@@ -81,47 +81,52 @@ public function searchIndex(Request $request)
      */
     public function store(Request $request)
 {
-    $request->validate([
-        'product_name' => 'required',
-        'company_id' => 'required',
-        'price' => 'required|integer',
-        'stock' => 'required|integer',
-        'img' => 'image|mimes:jpeg,png,jpg,gif',
-    ]);
+    try {
+        $request->validate([
+            'product_name' => 'required',
+            'company_id' => 'required',
+            'price' => 'required|integer',
+            'stock' => 'required|integer',
+            'img' => 'image|mimes:jpeg,png,jpg,gif',
+        ]);
 
-    // 画像が選択されている場合にのみバリデーションルールを追加
-    $rules = [
-        'product_name' => 'required',
-        'company_id' => 'required',
-        'price' => 'required|integer',
-        'stock' => 'required|integer',
-    ];
-    if ($request->hasFile('img')) {
-        $rules['img'] = 'image|mimes:jpeg,png,jpg,gif';
+        // 画像が選択されている場合にのみバリデーションルールを追加
+        $rules = [
+            'product_name' => 'required',
+            'company_id' => 'required',
+            'price' => 'required|integer',
+            'stock' => 'required|integer',
+        ];
+        if ($request->hasFile('img')) {
+            $rules['img'] = 'image|mimes:jpeg,png,jpg,gif';
+        }
+
+        // バリデーションが成功した場合の処理
+        $request->validate($rules);
+
+        // 商品情報を新規作成
+        $product = new Products;
+        $product->product_name = $request->product_name;
+        $product->company_id = $request->company_id;
+        $product->price = $request->price;
+        $product->stock = $request->stock;
+        $product->comment = $request->comment;
+
+        // 画像が選択されている場合にのみ新しい画像を保存
+        if ($request->hasFile('img')) {
+            $image = $request->file('img');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->storeAs('public/images', $imageName);
+            $product->img_path = 'storage/images/' . $imageName;
+        }
+
+        $product->save();
+
+        return redirect()->route('list');
+    } catch (ValidationException $e) {
+        // バリデーションエラーが発生した場合の処理
+        return redirect()->back()->withErrors($e->errors())->withInput();
     }
-
-    // バリデーションが成功した場合の処理
-    $request->validate($rules);
-
-    // 商品情報を新規作成
-    $product = new Products;
-    $product->product_name = $request->product_name;
-    $product->company_id = $request->company_id;
-    $product->price = $request->price;
-    $product->stock = $request->stock;
-    $product->comment = $request->comment;
-
-    // 画像が選択されている場合にのみ新しい画像を保存
-    if ($request->hasFile('img')) {
-        $image = $request->file('img');
-        $imageName = time() . '_' . $image->getClientOriginalName();
-        $image->storeAs('public/images', $imageName);
-        $product->img_path = 'storage/images/' . $imageName;
-    }
-
-    $product->save();
-
-    return redirect()->route('list'); 
 }
 
     /**
@@ -162,37 +167,42 @@ public function searchIndex(Request $request)
      */
     public function update(Request $request, $id)
 {
-    // バリデーションルール
-    $rules = [
-        'product_name' => 'required',
-        'company_id' => 'required',
-        'price' => 'required|integer',
-        'stock' => 'required|integer',
-        'img' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-    ];
+    try {
+        // バリデーションルール
+        $rules = [
+            'product_name' => 'required',
+            'company_id' => 'required',
+            'price' => 'required|integer',
+            'stock' => 'required|integer',
+            'img' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ];
 
-    $request->validate($rules);
+        $request->validate($rules);
 
-    $product = Products::find($id);
+        $product = Products::find($id);
 
-    // 商品画像がアップロードされた場合の処理
-    if ($request->hasFile('img')) {
-        // 画像を保存
-        $image = $request->file('img');
-        $imageName = time() . '.' . $image->getClientOriginalExtension();
-        $image->move(public_path('storage/images'), $imageName);
-        $product->img_path = 'storage/images/' . $imageName;
+        // 商品画像がアップロードされた場合の処理
+        if ($request->hasFile('img')) {
+            // 画像を保存
+            $image = $request->file('img');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('storage/images'), $imageName);
+            $product->img_path = 'storage/images/' . $imageName;
+        }
+
+        // 商品情報の更新
+        $product->product_name = $request->product_name;
+        $product->company_id = $request->company_id;
+        $product->price = $request->price;
+        $product->stock = $request->stock;
+        $product->comment = $request->comment;
+        $product->save();
+
+        return redirect()->route('list');
+    } catch (ValidationException $e) {
+        // バリデーションエラーが発生した場合の処理
+        return redirect()->back()->withErrors($e->errors())->withInput();
     }
-
-    // 商品情報の更新
-    $product->product_name = $request->product_name;
-    $product->company_id = $request->company_id;
-    $product->price = $request->price;
-    $product->stock = $request->stock;
-    $product->comment = $request->comment;
-    $product->save();
-
-    return redirect()->route('list');
 }
 
 

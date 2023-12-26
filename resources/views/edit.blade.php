@@ -50,7 +50,7 @@
             商品画像
             <input type="file" name="img">
             @if ($product->img_path)
-               <img src="{{ asset($product->img_path) }}" alt="商品画像">
+               <img src="{{ asset($product->img_path) }}" alt="商品画像" width="300" >
             @else
                <p>画像未登録</p>
             @endif
