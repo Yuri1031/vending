@@ -9,14 +9,15 @@ class Products extends Model
 {
     use HasFactory;
 
-    public function getList() {
-        // Eloquent を使ってデータを取得
-        return $this->all();
+    // メソッドを追加
+    public static function getList()
+    {
+        // Eager load the company relationship
+        return self::with('company')->get();
     }
 
     public function company()
-{
-    return $this->belongsTo(Company::class);
-}
-
+    {
+        return $this->belongsTo(Company::class);
+    }
 }

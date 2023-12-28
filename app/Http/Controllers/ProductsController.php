@@ -27,9 +27,7 @@ class ProductsController extends Controller
 
     public function getList()
 {
-    // Eager load the company relationship
-    $products = Products::with('company')->get();
-    return $products;
+    $products = Products::getList();
 }
 
 public function searchIndex(Request $request)
