@@ -213,10 +213,17 @@ public function searchIndex(Request $request)
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-{
-    $product = Products::findOrFail($id);
-    $product->delete();
-    return redirect()->route('list');
-}
-
+    {
+        try {
+            $product = Products::findOrFail($id);
+            $product->delete();
+            return redirect()->route('list');
+        } catch (ModelNotFoundException $e) {
+            // モデルが見つからなかった場合の処理
+            return redirect()->back()->withErrors(['error' => '指定された商品が見つかりません。']);
+        } catch (\Exception $e) {
+            // その他の例外が発生した場合の処理
+            return redirect()->back()->withErrors(['error' => '予期せぬエラーが発生しました。']);
+        }
+    }
 }
