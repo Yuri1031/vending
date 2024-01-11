@@ -21,7 +21,7 @@ class ProductsController extends Controller
         $keyword = $request->input('keyword');
         $companies = Company::all();
         $model = new Products();
-        $products = $model->getList();
+        $products = Products::sortable()->get();
         return view('list', ['products' => $products, 'companies' => $companies]);
     } 
 
@@ -30,25 +30,27 @@ class ProductsController extends Controller
     $products = Products::getList();
 }
 
+
 public function searchIndex(Request $request)
 {
+    // リクエストからの検索条件取得
     $keyword = $request->input('keyword');
-    $companies = Company::all();
     $maker = $request->input('maker');
+    $minPrice = $request->input('min_price');
+    $maxPrice = $request->input('max_price');
+    $minStock = $request->input('min_stock');
+    $maxStock = $request->input('max_stock');
 
-    $query = Products::query();
+    // ページネーションを考慮した検索クエリ
+    $query = Product::query();
+        if ($keyword) { $query->where('product_name', 'LIKE', '%' . $keyword . '%'); }
+        if ($maker) { $query->where('company_id', $maker); }
+        if ($minPrice !== null && $maxPrice !== null) { $query->whereBetween('price', [$minPrice, $maxPrice]); }
+        if ($minStock !== null && $maxStock !== null) { $query->whereBetween('stock', [$minStock, $maxStock]); }
 
-    if (!empty($keyword)) {
-        $query->where('product_name', 'LIKE', "%{$keyword}%");
-    }
-
-    if (!empty($maker)) {
-        $query->where('company_id', $maker);
-    }
-
-    $products = $query->get();
-
-    return view('list', compact('keyword', 'products','companies'));
+    // ページネーションを適用して結果取得
+    $products = $query->with('company')->paginate(10);
+    return view('list', compact('keyword', 'products'));
 }
 
 
@@ -217,13 +219,14 @@ public function searchIndex(Request $request)
         try {
             $product = Products::findOrFail($id);
             $product->delete();
-            return redirect()->route('list');
+    
+            return response()->json(['success' => true]);
         } catch (ModelNotFoundException $e) {
             // モデルが見つからなかった場合の処理
-            return redirect()->back()->withErrors(['error' => '指定された商品が見つかりません。']);
+            return response()->json(['error' => '指定された商品が見つかりません。']);
         } catch (\Exception $e) {
             // その他の例外が発生した場合の処理
-            return redirect()->back()->withErrors(['error' => '予期せぬエラーが発生しました。']);
+            return response()->json(['error' => '予期せぬエラーが発生しました。']);
         }
     }
 }
