@@ -40,9 +40,10 @@ public function searchIndex(Request $request)
     $maxPrice = $request->input('max_price');
     $minStock = $request->input('min_stock');
     $maxStock = $request->input('max_stock');
+    $companies = Company::all();
 
     // ページネーションを考慮した検索クエリ
-    $query = Product::query();
+    $query = Products::query();
         if ($keyword) { $query->where('product_name', 'LIKE', '%' . $keyword . '%'); }
         if ($maker) { $query->where('company_id', $maker); }
         if ($minPrice !== null && $maxPrice !== null) { $query->whereBetween('price', [$minPrice, $maxPrice]); }
@@ -50,7 +51,7 @@ public function searchIndex(Request $request)
 
     // ページネーションを適用して結果取得
     $products = $query->with('company')->paginate(10);
-    return view('list', compact('keyword', 'products'));
+    return view('list', compact('keyword', 'products','companies'));
 }
 
 

@@ -9,7 +9,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <!-- jQuery書き方 https://uxmilk.jp/11074 -->
     <!-- テーブルソート機能ヒント https://qiita.com/anomeme/items/5475c5e8ba9136e73b4e -->
-   
+    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
   </head>
 
   <body>
@@ -20,6 +21,7 @@
     <div class="base">
 
       <form class="search" id="search-form" action="{{ route('search') }}" method="GET">
+        @csrf
         <div class="search-group">
           <input type="text" name="keyword" placeholder="検索キーワード">
         </div>
@@ -49,7 +51,7 @@
         </div>
 
         <div class="search-group">
-          <input class="go" type="submit" value="検索">
+          <input class="go" id="search-button" type="submit" value="検索">
         </div>
 
         <div class="new">
@@ -112,6 +114,38 @@
 
        
  <script>
+  //検索処理
+  $(document).ready(function () {
+    searchProducts();
+
+    function searchProducts() {
+      $('.search-button').click(function () {
+        console.log('ボタンがクリックされました');
+        performSearch();
+      });
+
+      var keyword = $('#keyword').val();
+      let formData = $('#search-form').serialize();
+
+      // Laravelのroute関数を使ってURLを取得
+      var searchUrl = "{{ route('search') }}";
+
+      $.ajax({
+        url: searchUrl,
+        type: "GET",
+        data: formData,
+        dataType: "html",
+      }).done(function (data) {
+        let newTable = $(data).find('#products-table');
+        $('#products-table').replaceWith(newTable);
+      }).fail(function (error) {
+        console.error('Error:', error);
+      });
+    }
+  });
+
+
+  
     $(document).ready(function () {
         // 商品削除の非同期処理
         $('.del').click(function (event) {
@@ -140,69 +174,9 @@
         });
     });
 
-    function displaySearchResults(products) {
-        // 検索結果をテーブルに表示
-        var tableHtml = '<table border="1"><tr><th>ID</th><th>商品画像</th><th>商品名</th><th>価格</th><th>在庫数</th><th>メーカー名</th></tr>';
 
-        $.each(products, function (index, product) {
-            tableHtml += '<tr>';
-            tableHtml += '<td>' + product.id + '</td>';
-            tableHtml += '<td>';
 
-            if (product.img_path) {
-                tableHtml += '<img src="' + product.img_path + '" alt="商品画像" width="100" height="50">';
-            } else {
-                tableHtml += 'No Image';
-            }
-
-            tableHtml += '</td>';
-            tableHtml += '<td>' + product.product_name + '</td>';
-            tableHtml += '<td>￥' + product.price + '</td>';
-            tableHtml += '<td>' + product.stock + '</td>';
-            tableHtml += '<td>' + product.company.company_name + '</td>';
-            tableHtml += '<td><a href="{{ url('edit') }}/' + product.id + '"><input class="detail" type="submit" name="submit" value="詳細&編集"></a></td>';
-            tableHtml += '<td class="ml-2">';
-            tableHtml += '<form method="POST" action="{{ url('destroy') }}/' + product.id + '">';
-            tableHtml += '<input type="hidden" name="_method" value="DELETE">';
-            tableHtml += '@csrf';
-            tableHtml += '<input class="del" type="submit" name="delete" value="削除" onClick="return confirm(\'削除しますか？\')">';
-            tableHtml += '</form>';
-            tableHtml += '</td>';
-            tableHtml += '</tr>';
-        });
-
-        tableHtml += '</table>';
-        $('#sortable-table').html(tableHtml);
-    };
-
-    $(document).ready(function () {
-        // 商品削除の非同期処理
-        $('.del').click(function (event) {
-            event.preventDefault();
-
-            var form = $(this).closest('form');
-            var url = form.attr('action');
-
-            // Ajaxリクエストを送信
-            $.ajax({
-                url: url,
-                type: "DELETE",
-                dataType: "json",
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                success: function (data) {
-                    // 削除が成功した場合の処理
-                    console.log('Delete success');
-
-                    // 該当の行を非表示にする
-                    form.closest('tr').hide();
-                },
-                error: function (error) {
-                    // エラーが発生した場合の処理
-                    console.error('Error:', error);
-                }
-            });
-        });
-    });
+    
 </script>
 
 
