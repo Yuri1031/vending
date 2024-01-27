@@ -32,7 +32,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 //一覧画面
 Route::get('/list', [App\Http\Controllers\ProductsController::class, 'index'])->name('list');
 Route::get('/search', [App\Http\Controllers\ProductsController::class, 'searchIndex'])->name('search');
-Route::get('sales','API\SalesController@index');
 
 //新規登録
 Route::get('/register/create', [App\Http\Controllers\ProductsController::class,'create'])->name('register.create');

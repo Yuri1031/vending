@@ -7,8 +7,10 @@
    
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <!-- jQuery書き方 https://uxmilk.jp/11074 -->
-    <!-- テーブルソート機能ヒント https://qiita.com/anomeme/items/5475c5e8ba9136e73b4e -->
+    <!-- tablesorter プラグイン -->
+    <script src="{{ asset('/js/jquery.tablesorter.min.js') }}"></script>
+    <!-- ※jQuery書き方 https://uxmilk.jp/11074 -->
+    <!-- ※テーブルソート機能ヒント https://qiita.com/anomeme/items/5475c5e8ba9136e73b4e -->
     
     <meta name="csrf-token" content="{{ csrf_token() }}">
   </head>
@@ -114,38 +116,40 @@
 
        
  <script>
-  //検索処理
-  $(document).ready(function () {
-    searchProducts();
-
-    function searchProducts() {
-      $('.search-button').click(function () {
+    //検索ボタン処理
+    $('#search-button').click(function (event) {
+        event.preventDefault(); // ボタンがクリックされたときデフォルトの動作をストップ
         console.log('ボタンがクリックされました');
         performSearch();
-      });
+    });
 
-      var keyword = $('#keyword').val();
-      let formData = $('#search-form').serialize();
+    function performSearch() {
+        // フォーム入力情報の取得
+        var keyword = $('#keyword').val();
+        let formData = $('#search-form').serialize();
 
-      // Laravelのroute関数を使ってURLを取得
-      var searchUrl = "{{ route('search') }}";
+        // Laravelのroute関数を使ってURLを取得
+        var searchUrl = "{{ route('search') }}";
 
-      $.ajax({
-        url: searchUrl,
-        type: "GET",
-        data: formData,
-        dataType: "html",
-      }).done(function (data) {
-        let newTable = $(data).find('#products-table');
-        $('#products-table').replaceWith(newTable);
-      }).fail(function (error) {
-        console.error('Error:', error);
-      });
-    }
-  });
+        // Ajaxリクエストを送信
+        $.ajax({
+            url: searchUrl,
+            type: "GET",
+            data: formData,
+            dataType: "html",
+        }).done(function (data) {
+            // 検索結果を表示する処理など
+            let newTable = $(data).find('#sortable-table');
+            $('#sortable-table').replaceWith(newTable);// テーブルすり替え変更
+            $('#sortable-table').tablesorter();// テーブル変更後再度 tablesorter を初期化
+        }).fail(function (error) {
+            console.error('Error:', error);
+        });
+    };
 
 
-  
+
+    //削除ボタン処理  
     $(document).ready(function () {
         // 商品削除の非同期処理
         $('.del').click(function (event) {
