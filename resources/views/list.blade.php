@@ -30,7 +30,7 @@
 
         <div class="search-group">
           <select class="choices" name="maker">
-             <option>メーカー名</option>
+             <option value="">メーカー名</option>
               @foreach ($companies as $company)
              <option value="{{ $company->id }}">{{ $company->company_name }}</option>
               @endforeach 
@@ -116,13 +116,17 @@
 
        
  <script>
-    //検索ボタン処理
-    $('#search-button').click(function (event) {
-        event.preventDefault(); // ボタンがクリックされたときデフォルトの動作をストップ
-        console.log('ボタンがクリックされました');
-        performSearch();
-    });
+   //①検索処理
+    // 検索ボタン処理
+    function setupSearchButton() {
+        $('#search-button').click(function (event) {
+            event.preventDefault(); // ボタンがクリックされたときデフォルトの動作をストップ
+            console.log('ボタンがクリックされました');
+            performSearch();
+        });
+    }
 
+    // 検索後の処理
     function performSearch() {
         // フォーム入力情報の取得
         var keyword = $('#keyword').val();
@@ -140,17 +144,32 @@
         }).done(function (data) {
             // 検索結果を表示する処理など
             let newTable = $(data).find('#sortable-table');
-            $('#sortable-table').replaceWith(newTable);// テーブルすり替え変更
+            $('#sortable-table').replaceWith(newTable);// 新しいテーブルに替える
             $('#sortable-table').tablesorter();// テーブル変更後再度 tablesorter を初期化
+
+            // 新しいテーブルにイベント処理を加える
+            setupDeleteButton();
         }).fail(function (error) {
             console.error('Error:', error);
         });
-    };
+      };
+
+      // HTML読み込み後の初期化関数
+      function initialize() {
+        setupSearchButton();
+        setupDeleteButton();
+      }
+
+      // HTML読み込み後の処理
+      $(document).ready(function () {
+        initialize();
+      });
 
 
-
-    //削除ボタン処理  
-    $(document).ready(function () {
+      
+   //②削除処理
+    //削除ボタン処理
+    function setupDeleteButton() {
         // 商品削除の非同期処理
         $('.del').click(function (event) {
             event.preventDefault();
@@ -165,20 +184,19 @@
                 url: url,
                 type: "DELETE",
                 dataType: "json",
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 // 削除が成功した場合の処理
                 success: function (data) {
                     console.log('Delete success');// 該当の行を非表示にする
-                    form.closest('tr').fadeOut();},// または hide() を使用
+                    form.closest('tr').fadeOut();
+                },
                 // エラーが発生した場合の処理
                 error: function (error) {
                     console.error('Error:', error);
                 }
             });
         });
-    });
-
-
+    }
 
     
 </script>
