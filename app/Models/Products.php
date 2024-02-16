@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Products;
+use App\Models\Company; 
 use Kyslik\ColumnSortable\Sortable;
 
-class Products extends Model
+class Products extends Model 
 {
     use HasFactory;
     use Sortable;
@@ -23,5 +23,7 @@ class Products extends Model
     {
         return $this->belongsTo(Company::class);
     }
+    
+    // fillable プロパティを修正
     protected $fillable = ['product_name', 'company_id', 'price', 'stock', 'comment'];
 }

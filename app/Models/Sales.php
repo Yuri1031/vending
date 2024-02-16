@@ -18,3 +18,4 @@ class Sales extends Model
 
     
 }
+
